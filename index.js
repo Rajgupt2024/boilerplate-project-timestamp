@@ -24,7 +24,42 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+// 📌 Route to return the current timestamp
+app.get("/api/timestamp", (req, res) => {
+  const currentDate = new Date();
+  res.json({
+    unix: currentDate.getTime(),
+    utc: currentDate.toUTCString(),
+  });
+});
 
+// 📌 Route to handle date input
+app.get("/api/timestamp/:date", (req, res) => {
+  let { date } = req.params;
+
+  // If the date is a number (Unix timestamp), convert it to an integer
+  if (!isNaN(date)) {
+    date = parseInt(date);
+  }
+
+  const parsedDate = new Date(date);
+
+  // 📌 Handle invalid date input
+  if (parsedDate.toString() === "Invalid Date") {
+    return res.json({ error: "Invalid Date" });
+  }
+
+  res.json({
+    unix: parsedDate.getTime(),
+    utc: parsedDate.toUTCString(),
+  });
+});
+
+// 📌 Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Server is running on port ${PORT}`);
+});
 
 // Listen on port set in environment variable or default to 3000
 var listener = app.listen(process.env.PORT || 3000, function () {
